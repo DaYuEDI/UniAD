@@ -1,8 +1,8 @@
-FROM nvidia/cuda:11.1.1-cudnn8-devel-ubuntu20.04
+FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04
 
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Europe/Stockholm
+ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 ENV NVIDIA_DRIVER_CAPABILITIES ${NVIDIA_DRIVER_CAPABILITIES},compute,display
@@ -30,10 +30,10 @@ RUN apt-get update -q && \
 ENV TORCH_CUDA_ARCH_LIST="6.0 6.1 7.0 7.5 8.0+PTX"
 ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 ENV PATH=${PATH}:/usr/local/cuda:/usr/local/cuda/bin
-RUN pip install torch==1.9.1+cu111 torchvision==0.10.1+cu111 torchaudio==0.9.1 -f https://download.pytorch.org/whl/torch_stable.html
+RUN pip install torch==1.10.0+cu113 torchvision==0.11.0+cu113 torchaudio==0.10.0 --extra-index-url https://download.pytorch.org/whl/cu113
 
 RUN pip uninstall numpy scikit-image pandas matplotlib shapely setuptools urllib3 -y
-RUN pip install numpy==1.20.0 scikit-image==0.19.3 pandas==1.4.4 matplotlib==3.6 shapely==1.8.5.post1 setuptools==59.5.0
+RUN pip install numpy==1.23.4 scikit-image==0.20.0 pandas==1.4.4 matplotlib==3.6 shapely==1.8.5.post1 setuptools==59.5.0
 RUN pip install scikit-learn pyquaternion cachetools descartes future tensorboard
 RUN pip install IPython
 
@@ -41,14 +41,14 @@ RUN pip install IPython
 ENV CUDA_HOME=/usr/local/cuda
 ENV FORCE_CUDA="1"
 
-RUN pip install mmcv-full==1.4.0 -f https://download.openmmlab.com/mmcv/dist/cu111/torch1.9.0/index.html
+RUN pip install mmcv-full==1.4.0 -f https://download.openmmlab.com/mmcv/dist/cu113/torch1.10.0/index.html
 RUN pip install mmdet==2.14.0
 RUN pip install mmsegmentation==0.14.1
 
 # Install mmdetection3d
 RUN git clone --branch v0.17.1 --single-branch https://github.com/open-mmlab/mmdetection3d.git
 WORKDIR /mmdetection3d
-RUN pip install scipy==1.7.3 scikit-image==0.20.0
+RUN pip install scipy==1.8.0 scikit-image==0.20.0
 RUN pip install --no-cache-dir -v -e .
 
 # Copy to python dist-package foldder
